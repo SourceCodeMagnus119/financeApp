@@ -18,16 +18,17 @@ const { MongoClient, ServerApiVersion } = require('mongodb');
 
 const app = express();
 
-app.use(cors());
-app.use(morgan('dev'));
-app.use(cookieParser());
-app.use(express.json());
-app.use(bodyParser.json());
-app.use(passport.session());
-app.use(passport.initialize);
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(session({ secret: 'keyboard cat', resave: true,
+    saveUninitialized: true,  cookie: { maxAge: 60000 }
+}));
 app.use(express.static(path.join(__dirname, 'client')));
-app.use(session({ secret: process.env.TOKEN_KEY, cookie: { maxAge: 60000 }}));
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(passport.initialize());
+app.use(passport.session());
+app.use(express.json());
+app.use(cookieParser());
+app.use(morgan('dev'));
+app.use(cors());
 app.use(helmet({
     strictTransportSecurity: true,
     contentSecurityPolicy: {
@@ -40,10 +41,14 @@ app.get('/', (req, res, next) => {
     console.log(`Middleware Called`);
     next();
 });
-app.use('/', (req, res) => {
+app.use('/home', (req, res) => {
     res
     .status(200)
     .json({ message: `Welcome to Dilo`});
+    res.setHeaders('Content-type', 'text/html'),
+    res.write('<h1>DILO</h1>'),
+    res.write('<p>PERSONALIZE YOUR FINANCES WITH DILO</p>'),
+    res.end();
 });
 
 /**
@@ -57,6 +62,7 @@ app.use('/', transactions);
 
 /**
  * @param rate Limiter.
+ * @returns Redirects Brute force attacks and suspicious requests.
  */
 const limiter = rateLimit({
     windowMs: 15 * 60 * 1000,
@@ -71,7 +77,7 @@ app.use(limiter);
 /**
  * @param Server Session Implementation.
  */
-const accessSession = require('./middleware/session');
+const { accessSession } = require('./middleware/session');
 
 app.get('/', accessSession);
 

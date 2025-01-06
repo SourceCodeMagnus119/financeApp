@@ -15,11 +15,11 @@ const {
 /**
  * @param Endpoint Management.
  */
-router.post('api/sign-up', createUser, signUp);
-router.post('api/login', Login);
-router.get('api/users', allUsers);
-router.get('api/users/:id', usersById);
-router.put('api/users/:id/change-password', changePassword);
-router.delete('api/users/:id/delete-account', deleteAcc);
+router.post('/api/sign-up', createUser, signUp);
+router.post('/api/login', Login);
+router.get('/api/users', allUsers);
+router.get('/api/users/:id', usersById);
+router.put('/api/users/:id/change-password', changePassword);
+router.delete('/api/users/:id/delete-account', deleteAcc);
 
 module.exports = router;

@@ -1,7 +1,7 @@
 /**
  * @param Session Management.
  */
-const accessSession = async() => {
+const accessSession = async(req, res, next) => {
     try {
         if(req.session.views) {
             req.session.views++,
@@ -10,15 +10,13 @@ const accessSession = async() => {
             res.write('<p>expires in: ' + (req.session.cookie.maxAge / 1000) + 's</p>'),
             res.end();
         } else {
-            res.session.view = 1;
+            req.session.views = 1;
             res.end('Welcome to the session demo. refresh!');
         }
     } catch(err) {
-        res
-        .status(500)
-        .json({ message: `Invalid Session Id`})
+        res.status(500).json({ message: `Invalid Session Id`});
         console.error(err);
     }
 };
 
-module.exports = accessSession;
+module.exports = { accessSession };
