@@ -49,6 +49,11 @@ app.use('/', (req, res) => {
 /**
  * @param API Endpoints.
  */
+const user = require("./routes/user");
+const transactions = require('./routes/transactions');
+
+app.use('/', user);
+app.use('/', transactions);
 
 /**
  * @param rate Limiter.
@@ -66,6 +71,9 @@ app.use(limiter);
 /**
  * @param Server Session Implementation.
  */
+const accessSession = require('./middleware/session');
+
+app.get('/', accessSession);
 
 /**
  * @param Error Handling.
