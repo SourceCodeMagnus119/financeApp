@@ -1,6 +1,6 @@
 /**
  * @param DILO - your personal financing App
- * @author PAUL JS GOWASEB <SourceCodeMagnus119> email: <paulusg131@gmail.com>
+ * @author PAUL JH GOWASEB <SourceCodeMagnus119> email: <paulusg131@gmail.com>
  */
 require('dotenv').config();
 const cors = require('cors');
@@ -82,11 +82,11 @@ const { accessSession } = require('./middleware/session');
 app.get('/', accessSession);
 
 /**
- * @param Error Handling.
+ * @param Server Logging.
  */
 
 /**
- * @param Server Logging.
+ * @param Error Handling.
  */
 
 const port = process.env.PORT;

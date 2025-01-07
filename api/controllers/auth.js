@@ -24,10 +24,14 @@ const signUp = async(req, res, next) => {
             .json({ message: `User already Exists`});
         }
         
-        const token = createSecretToken(User.id);
-        res.cookie(token, {
+        const user = await User.create({})
+        const token = createSecretToken(user.id);
+        res.cookie("token", token, {
             httpOnly: true,
             withCredentials: true,
+            expires: new Date(Date.now() + 1000 * 86400),
+            sameSite: "none",
+            secure: true,
         });
         res
         .status(200)
@@ -58,18 +62,31 @@ const Login = async(req, res, next) => {
         }
 
         const compare = await bcrypt.compare(password, user.password);
-        if(!compare) {
-            res
-            .status(401)
-            .json({ message: `Incorrect email or password. Please try Again` });
-        }
         const token = createSecretToken(user.id);
-        res.send({
-            id: user.id,
-            username: user.username,
-            token: token,
-            role: role,
+        res.cookie("token", token, {
+            httpOnly: true,
+            withCredentials: true,
+            expires: new Date(Date.now() + 1000 * 86400),
+            sameSite: "none",
+            secure: true,
         });
+
+        if(user && compare) {
+            const { id, username, email, password } = user;
+            res
+            .status(200)
+            .json({
+                id,
+                username,
+                email,
+                password,
+                token, 
+                message: `Successfully Logged in`
+            });
+        }
+        res
+        .status(401)
+        .json({ message: `Incorrect email or password. Please try Again` });
     } catch(err) {
         res
         .status(500)
@@ -78,4 +95,65 @@ const Login = async(req, res, next) => {
     }
 };
 
-module.exports = { signUp, Login };
+const Logout = async(req, res) => {
+    try {
+        res.cookie("token", "", {
+            httpOnly: true,
+            withCredentials: true,
+            expires: new Date(0),
+            sameSite: "none",
+            secure: true,
+        });
+        res
+        .status(200)
+        .json({ message: `User Logged Out Successfully` });
+    } catch(err) {
+        res
+        .status(500)
+        .json({ message: `Internal Server Error` });
+    }
+}
+
+const loginStatus = async(req, res) => {
+    try {
+        const token = req.cookies.token;
+        if(!token) {
+            res.status(400).json(false)
+        }
+
+        const verified = jwt.verify(token, process.env.TOKEN_KEY);
+        if(verified) {
+            res.stats(200).json(true);
+        }
+        res.status(400).json(false);
+    } catch(err) {
+        res.status(500).json({ message: `Internal Server Error` });
+        console.error(err);
+    }
+};
+
+const protected = async(req, res, next) => {
+    try {
+        const token = req.cookies.token;
+        if(!token) {
+            res.status(400).json({ message: `Not Authorized: Please login` });
+        }
+        const verified = jwt.verify(token, process.env.TOKEN_KEY);
+        const user = await User.findById(verified.id).select("-password");
+        
+        if(!user) {
+            res
+            .status(400)
+            .json({ message: `User not found` });
+        }
+        req.user = user;
+        next();
+    } catch(err) {
+        res
+        .status(500)
+        .json({ message: `Internal Server Error` });
+        console.error(err);
+    }
+};
+
+module.exports = { signUp, Login, Logout, loginStatus, protected };

@@ -10,6 +10,9 @@ const {
 const {
     signUp,
     Login,
+    loginStatus,
+    protected,
+    Logout,
 } = require("../controllers/auth");
 
 /**
@@ -17,9 +20,11 @@ const {
  */
 router.post('/api/sign-up', createUser, signUp);
 router.post('/api/login', Login);
-router.get('/api/users', allUsers);
-router.get('/api/users/:id', usersById);
-router.put('/api/users/:id/change-password', changePassword);
-router.delete('/api/users/:id/delete-account', deleteAcc);
+router.get('/api/logout', protected, Logout);
+router.get('/api/users', protected, allUsers);
+router.get('/api/loggedIn', loginStatus);
+router.get('/api/users/:id', protected, usersById);
+router.put('/api/users/:id/change-password', protected, changePassword);
+router.delete('/api/users/:id/delete-account', protected, deleteAcc);
 
 module.exports = router;
