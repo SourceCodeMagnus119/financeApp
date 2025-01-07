@@ -118,16 +118,24 @@ const loginStatus = async(req, res) => {
     try {
         const token = req.cookies.token;
         if(!token) {
-            res.status(400).json(false)
+            res
+            .status(400)
+            .json(false)
         }
 
         const verified = jwt.verify(token, process.env.TOKEN_KEY);
         if(verified) {
-            res.stats(200).json(true);
+            res
+            .stats(200)
+            .json(true);
         }
-        res.status(400).json(false);
+        res
+        .status(400)
+        .json(false);
     } catch(err) {
-        res.status(500).json({ message: `Internal Server Error` });
+        res
+        .status(500)
+        .json({ message: `Internal Server Error` });
         console.error(err);
     }
 };
@@ -136,7 +144,9 @@ const protected = async(req, res, next) => {
     try {
         const token = req.cookies.token;
         if(!token) {
-            res.status(400).json({ message: `Not Authorized: Please login` });
+            res
+            .status(400)
+            .json({ message: `Not Authorized: Please login` });
         }
         const verified = jwt.verify(token, process.env.TOKEN_KEY);
         const user = await User.findById(verified.id).select("-password");

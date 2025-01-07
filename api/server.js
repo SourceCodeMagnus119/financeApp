@@ -88,6 +88,9 @@ app.get('/', accessSession);
 /**
  * @param Error Handling.
  */
+const errorHandler = require("./EH/errorHandler");
+
+app.use(errorHandler);
 
 const port = process.env.PORT;
 const time = new Date();
