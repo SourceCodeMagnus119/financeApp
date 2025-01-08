@@ -41,7 +41,7 @@ const createWindow = () => {
             }
         });
 
-        window.loadURL('http://localhost:1991');
+        window.loadURL('http://localhost:2500');
     } catch(err) {
         console.error(err);
     }

@@ -14,7 +14,9 @@ const accessSession = async(req, res, next) => {
             res.end('Welcome to the session demo. refresh!');
         }
     } catch(err) {
-        res.status(500).json({ message: `Invalid Session Id`});
+        res
+        .status(500)
+        .json({ message: `Invalid Session Id`});
         console.error(err);
     }
 };

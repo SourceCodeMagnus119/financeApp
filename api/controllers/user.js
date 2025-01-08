@@ -75,12 +75,41 @@ const changePassword = async(req, res) => {
     }
 };
 
+const update = async(req, res) => {
+    try {
+        const user = await User.findById(req.user.id)
+        if(user) {
+            const { username, email } = user;
+            user.email = email;
+            user.username = req.body.name || username;
+
+            const updated = await user.save();
+            res
+            .status(200)
+            .json({
+                username: updated.username,
+                email: updated.email, 
+            });
+        }
+        res
+        .status(400)
+        .json({ message: `Error updating user information` });
+    } catch(err) {
+        res
+        .status(500)
+        .json({ message: `Internal Server Error` })
+        console.error(err);
+    }
+};
+
 const deleteAcc = async(req, res) => {
     try {
         const deleteUser = await User.findByIdAndDelete(req.params.id);
         res
         .status(200)
-        .json({ message: `Succefully deleted`});
+        .json(deleteUser, 
+            { message: `Succefully deleted`}
+        );
     } catch(err) {
         res
         .status(500)
@@ -89,4 +118,4 @@ const deleteAcc = async(req, res) => {
     }
 };
 
-module.exports = { createUser, allUsers, usersById, changePassword, deleteAcc };
+module.exports = { createUser, allUsers, usersById, changePassword, update, deleteAcc };

@@ -18,7 +18,7 @@ const { MongoClient, ServerApiVersion } = require('mongodb');
 
 const app = express();
 
-app.use(session({ secret: 'keyboard cat', resave: true,
+app.use(session({ secret: process.env.TOKEN_KEY, resave: true,
     saveUninitialized: true,  cookie: { maxAge: 60000 }
 }));
 app.use(express.static(path.join(__dirname, 'client')));

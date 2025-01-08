@@ -5,6 +5,7 @@ const {
     allUsers, 
     usersById, 
     changePassword, 
+    update,
     deleteAcc,
 } = require('../controllers/user');
 const {
@@ -24,6 +25,7 @@ router.get('/api/logout', protected, Logout);
 router.get('/api/users', protected, allUsers);
 router.get('/api/loggedIn', loginStatus);
 router.get('/api/users/:id', protected, usersById);
+router.patch('/api/users/profile', update);
 router.put('/api/users/:id/change-password', protected, changePassword);
 router.delete('/api/users/:id/delete-account', protected, deleteAcc);
 
